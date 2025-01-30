@@ -1,0 +1,49 @@
+.workout-form-card {
+  max-width: 500px;
+  margin: 20px auto;
+  padding: 20px;
+  background-color: #ffffff;
+  border-radius: 12px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+mat-card-title {
+  color: #2c3e50;
+  font-size: 24px;
+  margin-bottom: 20px;
+}
+
+.form-row {
+  margin-bottom: 20px;
+}
+
+.full-width {
+  width: 100%;
+}
+
+.form-actions {
+  display: flex;
+  gap: 16px;
+  margin-top: 24px;
+}
+
+button {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 16px;
+  border-radius: 8px;
+  transition: all 0.3s ease;
+}
+
+button[color="primary"] {
+  background-color: #3498db;
+}
+
+button[color="primary"]:hover {
+  background-color: #2980b9;
+}
+
+mat-icon {
+  font-size: 20px;
+}

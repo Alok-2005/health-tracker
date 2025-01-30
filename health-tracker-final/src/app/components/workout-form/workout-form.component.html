@@ -1,0 +1,20 @@
+<div class="workout-form">
+    <form (ngSubmit)="onSubmit()">
+      <mat-form-field appearance="fill">
+        <mat-label>User Name</mat-label>
+        <input matInput [(ngModel)]="userName" name="userName" required>
+      </mat-form-field>
+  
+      <mat-form-field appearance="fill">
+        <mat-label>Workout Type</mat-label>
+        <input matInput [(ngModel)]="workoutType" name="workoutType" required>
+      </mat-form-field>
+  
+      <mat-form-field appearance="fill">
+        <mat-label>Workout Minutes</mat-label>
+        <input matInput [(ngModel)]="workoutMinutes" name="workoutMinutes" type="number" required>
+      </mat-form-field>
+  
+      <button mat-raised-button color="primary" type="submit">Add Workout</button>
+    </form>
+  </div>

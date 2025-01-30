@@ -1,0 +1,45 @@
+.workout-dashboard {
+  padding: 24px;
+  background-color: #f5f7fa;
+  min-height: 100vh;
+}
+
+.search-filters {
+  margin-bottom: 24px;
+}
+
+.filter-container {
+  display: flex;
+  gap: 20px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.search-field, .filter-field {
+  flex: 1;
+  min-width: 200px;
+}
+
+.content-container {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+}
+
+@media (max-width: 1200px) {
+  .content-container {
+    grid-template-columns: 1fr;
+  }
+}
+
+.table-container, .chart-container {
+  overflow: auto;
+}
+
+table {
+  width: 100%;
+}
+
+.mat-paginator {
+  margin-top: 20px;
+}
