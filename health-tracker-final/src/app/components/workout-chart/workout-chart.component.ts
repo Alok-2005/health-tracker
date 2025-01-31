@@ -30,47 +30,34 @@ import { Chart, ChartConfiguration } from 'chart.js/auto';
   `,
   styles: [`
     .chart-container {
-      height: 100%;
-      display: flex;
-      flex-direction: column;
-      gap: 20px;
-    }
-
-    .chart-wrapper {
-      flex: 1;
-      min-height: 0;
-      position: relative;
-    }
-
-    canvas {
-      width: 100% !important;
-      height: 100% !important;
+      padding: 2rem;
+      background: white;
+      border-radius: 0 0 15px 15px;
     }
 
     .stats-container {
-      display: flex;
-      gap: 20px;
-      justify-content: space-between;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 1.5rem;
+      margin-top: 2rem;
     }
 
     .stat-card {
-      flex: 1;
-      padding: 15px;
-      background: white;
-      border-radius: 8px;
-      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-    }
-
-    .stat-title {
-      font-size: 0.9rem;
-      color: #666;
-      margin-bottom: 5px;
-    }
-
-    .stat-value {
-      font-size: 1.2rem;
-      color: #333;
-      font-weight: 500;
+      padding: 1.5rem;
+      background: linear-gradient(135deg, #f8f9ff 0%, #ffffff 100%);
+      border-radius: 15px;
+      border: 1px solid rgba(74, 144, 226, 0.1);
+      position: relative;
+      overflow: hidden;
+      &::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 4px;
+        height: 100%;
+        background: #4A90E2;
+      }
     }
   `]
 })

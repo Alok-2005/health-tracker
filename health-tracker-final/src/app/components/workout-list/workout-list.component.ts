@@ -16,7 +16,8 @@ import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 import { MatIconModule } from '@angular/material/icon';
 import { MatCardModule } from '@angular/material/card';
-
+import { MatTooltipModule } from '@angular/material/tooltip';
+import { MatButtonModule } from '@angular/material/button';
 
 @Component({
   selector: 'app-workout-list',
@@ -32,20 +33,28 @@ import { MatCardModule } from '@angular/material/card';
     MatIconModule,
     MatCardModule,
     MatSnackBarModule,
+    MatTooltipModule,
+    MatButtonModule,
     WorkoutChartComponent
   ],
   template: `
-    <div class="workout-dashboard p-6">
-      <div class="search-filters mb-6">
-        <mat-card class="mb-4">
+    <div class="dashboard-container">
+      <header class="dashboard-header">
+        <h1 class="text-2xl font-bold text-gray-800 mb-2">Workout Dashboard</h1>
+        <p class="text-gray-600 mb-6">Track and manage user workouts</p>
+      </header>
+
+      <div class="search-filters">
+        <mat-card class="filter-card">
           <mat-card-content>
-            <div class="filter-container flex gap-4 items-center flex-wrap">
-              <mat-form-field class="flex-1 min-w-[200px]">
+            <div class="filter-container">
+              <mat-form-field  class="search-field">
                 <mat-label>Search Users</mat-label>
+                <mat-icon matPrefix class="text-gray-400"></mat-icon>
                 <input matInput [(ngModel)]="searchTerm" (input)="applyFilter()" placeholder="Enter name...">
               </mat-form-field>
 
-              <mat-form-field  class="flex-1 min-w-[200px]">
+              <mat-form-field  class="type-field">
                 <mat-label>Workout Type</mat-label>
                 <mat-select [(ngModel)]="workoutTypeFilter" (selectionChange)="applyFilter()">
                   <mat-option value="">All Types</mat-option>
@@ -59,163 +68,240 @@ import { MatCardModule } from '@angular/material/card';
         </mat-card>
       </div>
 
-     <div class="content-container grid grid-cols-2 gap-6">
-        <div class="table-container">
-          <mat-card class="bg-white p-4 rounded-lg shadow-md">
-            <mat-card-content>
-              <table mat-table [dataSource]="dataSource" class="w-full">
+      <div class="content-grid">
+        <mat-card class="table-card">
+          <mat-card-header>
+            <mat-card-title class="text-lg font-semibold">User Workouts</mat-card-title>
+          </mat-card-header>
+          <mat-card-content>
+            <div class="table-responsive">
+              <table mat-table [dataSource]="dataSource" class="workout-table">
+                <!-- Name Column -->
                 <ng-container matColumnDef="name">
                   <th mat-header-cell *matHeaderCellDef>Name</th>
-                  <td mat-cell *matCellDef="let element">{{element.name}}</td>
+                  <td mat-cell *matCellDef="let element" class="font-medium">{{element.name}}</td>
                 </ng-container>
 
-                <ng-container matColumnDef="workouts">
-                  <th mat-header-cell *matHeaderCellDef>Workouts</th>
-                  <td mat-cell *matCellDef="let element">
-                    <div *ngFor="let workout of element.workouts; let i = index" class="flex items-center justify-between">
-                      <span>{{workout.type}} ({{workout.minutes}} mins)</span>
-                      <button mat-icon-button color="warn" (click)="deleteWorkout(element.id, i, $event)" class="cursor-pointer">
-                        <mat-icon>🗑️</mat-icon>
-                      </button>
-                    </div>
-                  </td>
-                </ng-container>
-
-                <ng-container matColumnDef="workoutCount">
-                  <th mat-header-cell *matHeaderCellDef>Workout Count</th>
-                  <td mat-cell *matCellDef="let element">{{element.workouts.length}}</td>
-                </ng-container>
-
-                <ng-container matColumnDef="totalMinutes">
-                  <th mat-header-cell *matHeaderCellDef>Total Minutes</th>
-                  <td mat-cell *matCellDef="let element">{{getTotalMinutes(element.workouts)}}</td>
-                </ng-container>
-
-                <ng-container matColumnDef="actions">
-  <th mat-header-cell *matHeaderCellDef>Actions</th>
+                <!-- Workouts Column -->
+               <ng-container matColumnDef="workouts">
+  <th mat-header-cell *matHeaderCellDef>Workouts</th>
   <td mat-cell *matCellDef="let element">
-    <div class="flex items-center space-x-2">
-      <!-- Add Workout Button -->
-      <button mat-icon-button matTooltip="Add Workout" (click)="addWorkout(element)" class="cursor-pointer">
-        <mat-icon>+</mat-icon>
-      </button>
-
-      <!-- Delete User Button -->
-      <button mat-icon-button color="warn" matTooltip="Delete User" (click)="deleteUser(element.id, $event)" class="cursor-pointer">
+    <div *ngFor="let workout of element.workouts; let i = index" class="workout-item">
+      <span class="workout-type">{{workout.type}}</span>
+      <span class="workout-duration">{{workout.minutes}} mins</span>
+      <button mat-icon-button color="warn" 
+              (click)="deleteWorkout(element.id, i, $event)"
+              matTooltip="Delete workout"
+              class="delete-btn">
         <mat-icon>🗑️</mat-icon>
       </button>
     </div>
   </td>
 </ng-container>
 
+                <!-- Workout Count Column -->
+                <ng-container matColumnDef="workoutCount">
+                  <th mat-header-cell *matHeaderCellDef>Total Workouts</th>
+                  <td mat-cell *matCellDef="let element" class="text-center">
+                    <span class="workout-count">{{element.workouts.length}}</span>
+                  </td>
+                </ng-container>
+
+                <!-- Total Minutes Column -->
+                <ng-container matColumnDef="totalMinutes">
+                  <th mat-header-cell *matHeaderCellDef>Total Minutes</th>
+                  <td mat-cell *matCellDef="let element" class="text-center">
+                    <span class="total-minutes">{{getTotalMinutes(element.workouts)}}</span>
+                  </td>
+                </ng-container>
+
+                <!-- Actions Column -->
+                <ng-container matColumnDef="actions">
+                  <th mat-header-cell *matHeaderCellDef>Actions</th>
+                  <td mat-cell *matCellDef="let element">
+                    <div class="action-buttons">
+                      <button mat-mini-fab color="primary" 
+                              (click)="addWorkout(element)"
+                              matTooltip="Add workout">
+                        <mat-icon>+</mat-icon>
+                      </button>
+                      <button mat-mini-fab color="warn" 
+                              (click)="deleteUser(element.id, $event)"
+                              matTooltip="Delete user ">
+                        <mat-icon>🗑️</mat-icon>
+                      </button>
+                    </div>
+                  </td>
+                </ng-container>
 
                 <tr mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></tr>
-                <tr mat-row *matRowDef="let row; columns: displayedColumns;" (click)="selectUser(row)" [class.selected-row]="selectedUser?.id === row.id"></tr>
+                <tr mat-row *matRowDef="let row; columns: displayedColumns;" 
+                    (click)="selectUser(row)" 
+                    [class.selected-row]="selectedUser?.id === row.id"
+                    class="table-row"></tr>
               </table>
 
-              <mat-paginator #paginator [pageSize]="5" [pageSizeOptions]="[5, 10, 20]" [length]="dataSource.data.length" [showFirstLastButtons]="true" aria-label="Select page"></mat-paginator>
-            </mat-card-content>
-          </mat-card>
-        </div>
+              <mat-paginator #paginator 
+                           [pageSize]="5" 
+                           [pageSizeOptions]="[5, 10, 20]" 
+                           [length]="dataSource.data.length" 
+                           [showFirstLastButtons]="true" 
+                           aria-label="Select page">
+              </mat-paginator>
+            </div>
+          </mat-card-content>
+        </mat-card>
 
-        <div class="chart-container" *ngIf="selectedUser">
-          <mat-card class="bg-white p-4 rounded-lg shadow-md">
-            <mat-card-header>
-              <mat-card-title>
-                {{selectedUser.name}}'s Workout Progress
-              </mat-card-title>
-            </mat-card-header>
-            <mat-card-content>
-              <app-workout-chart [user]="selectedUser"></app-workout-chart>
-            </mat-card-content>
-          </mat-card>
-        </div>
+        <mat-card class="chart-card" *ngIf="selectedUser">
+          <mat-card-header>
+            <mat-card-title class="text-lg font-semibold">
+              {{selectedUser.name}}'s Progress
+            </mat-card-title>
+          </mat-card-header>
+          <mat-card-content>
+            <app-workout-chart [user]="selectedUser"></app-workout-chart>
+          </mat-card-content>
+        </mat-card>
       </div>
     </div>
   `,
-  styles: [
-    `
-    .workout-dashboard {
-  background-color: #f7fafc; /* Light grayish blue background */
-  min-height: 100vh;
-  padding: 30px;
-}
-
-.search-filters {
-  margin-bottom: 24px;
-}
-
-.filter-container {
+  styles: [`
+    .dashboard-container {
+      background-color: #f8fafc;
+      min-height: 100vh;
+      padding: 2rem;
+    }
+.workout-item {
   display: flex;
-  gap: 20px;
   align-items: center;
-  flex-wrap: wrap;
+  justify-content: space-between;
+  padding: 8px 16px; /* Adjust padding as needed */
+  border-bottom: 1px solid #ccc; /* Optional: adds a border for separation */
 }
 
-.content-container {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 24px;
-  cursor: pointer;
+.workout-type, .workout-duration {
+  margin-right: 16px; /* Adds space between text and button */
 }
 
-@media (max-width: 1200px) {
-  .content-container {
-    grid-template-columns: 1fr;
-  }
+.delete-btn {
+  padding: 0 8px; /* Adjust button padding */
 }
+    .dashboard-header {
+      margin-bottom: 2rem;
+    }
 
-mat-card {
-  background-color: #fff;
-  border-radius: 15px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  padding: 20px;
-}
+    .filter-card {
+      background: white;
+      border-radius: 12px;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+      margin-bottom: 2rem;
+    }
 
-.table-container {
-  overflow: auto;
-}
+    .filter-container {
+      display: flex;
+      gap: 1.5rem;
+      flex-wrap: wrap;
+    }
 
-.table-container table {
-  width: 100%;
-}
+    .search-field, .type-field {
+      flex: 1;
+      min-width: 250px;
+    }
 
-.selected-row {
-  background-color: #e3f2fd; /* Light Blue for selected row */
-}
+    .content-grid {
+      display: grid;
+      grid-template-columns: 3fr 2fr;
+      gap: 2rem;
+    }
 
-.mat-column-actions {
-  text-align: center;
-}
+    @media (max-width: 1200px) {
+      .content-grid {
+        grid-template-columns: 1fr;
+      }
+    }
 
-button.mat-icon-button {
-  color: #4A90E2; /* Blue color for actions */
-}
+    .table-card, .chart-card {
+      background: white;
+      border-radius: 12px;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+      overflow: hidden;
+    }
 
-button.mat-icon-button:hover {
-  background-color: #e8f0fe; /* Light Blue hover effect */
-}
+    .table-responsive {
+      overflow-x: auto;
+    }
 
-mat-card-title {
-  color: #333;
-  font-size: 1.2rem;
-  font-weight: 500;
-}
+    .workout-table {
+      width: 100%;
+    }
 
-.mat-paginator {
-  margin-top: 16px;
-}
+    .workout-item {
+      display: flex;
+      align-items: center;
+      padding: 0.5rem 0;
+      gap: 1rem;
+    }
 
-.success-snackbar {
-  background-color: #4caf50; /* Success Green */
-  color: white;
-}
+    .workout-type {
+      font-weight: 500;
+      color: #4f46e5;
+    }
 
-.success-snackbar .mat-simple-snackbar-action {
-  color: white;
-}
-  `
-  ]
+    .workout-duration {
+      color: #6b7280;
+    }
+
+    .workout-count, .total-minutes {
+      font-weight: 500;
+      color: #1f2937;
+    }
+
+    .action-buttons {
+      display: flex;
+      gap: 0.75rem;
+      justify-content: flex-start;
+      align-items: center;
+    }
+
+    .table-row {
+      transition: background-color 0.2s ease;
+    }
+
+    .table-row:hover {
+      background-color: #f3f4f6;
+      cursor: pointer;
+    }
+
+    .selected-row {
+      background-color: #e0e7ff !important;
+    }
+
+    .delete-btn {
+      opacity: 0.7;
+      transition: opacity 0.2s ease;
+    }
+
+    .delete-btn:hover {
+      opacity: 1;
+    }
+
+    .mat-mdc-card-header {
+      padding: 1rem 1rem 0 1rem;
+    }
+
+    .mat-mdc-card-content {
+      padding: 1rem;
+    }
+
+    ::ng-deep .success-snackbar {
+      background-color: #10b981;
+      color: white;
+    }
+
+    ::ng-deep .success-snackbar .mat-simple-snackbar-action {
+      color: white;
+    }
+  `]
 })
 export class WorkoutListComponent implements OnInit, AfterViewInit {
   @ViewChild(MatPaginator) paginator!: MatPaginator;
